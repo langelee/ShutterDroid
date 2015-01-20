@@ -20,4 +20,6 @@ public class ShutterStock {
                 }
             })
             .build();
+
+    private static final ShutterStockService SERVICE = ADAPTER.create(ShutterStockService.class);
 }
