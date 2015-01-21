@@ -15,6 +15,18 @@ public class Image {
     @SerializedName("assets")
     private ImageAssets mAssets;
 
+    public String getId() {
+        return mId;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getLargeThumbnail(){
+        return mAssets.mLargeThumb.mUrl;
+    }
+
     private class ImageAssets{
         @SerializedName("preview")
         private Thumbnail mPreview;

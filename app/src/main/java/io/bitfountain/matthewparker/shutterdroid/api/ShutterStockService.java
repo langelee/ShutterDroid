@@ -7,7 +7,7 @@ import retrofit.http.Query;
 /**
  * Created by matthewparker on 1/20/15.
  */
-public interface ShutterStockService {
+interface ShutterStockService {
     @GET("/images/search")
     public void search(@Query("query") String query, Callback<Response> cb);
 

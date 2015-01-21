@@ -6,6 +6,14 @@ import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import io.bitfountain.matthewparker.shutterdroid.api.Image;
+import io.bitfountain.matthewparker.shutterdroid.api.ShutterStock;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 
 public class MainActivity extends ActionBarActivity {
 
