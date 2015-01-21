@@ -2,6 +2,8 @@ package io.bitfountain.matthewparker.shutterdroid;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +23,12 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+
+
     }
 
 
