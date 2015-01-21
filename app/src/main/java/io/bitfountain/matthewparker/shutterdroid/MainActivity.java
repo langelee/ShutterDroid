@@ -1,5 +1,6 @@
 package io.bitfountain.matthewparker.shutterdroid;
 
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,6 +9,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.SearchView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,10 +23,11 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SearchView.OnQueryTextListener{
 
     private List<Image> mImages;
     private ImagesAdapter mAdapter;
+    private List<Image> mPreviousImages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,20 +42,25 @@ public class MainActivity extends ActionBarActivity {
         mAdapter = new ImagesAdapter(this, mImages);
         recyclerView.setAdapter(mAdapter);
 
-        ShutterStock.getRecent(new Date(), new Callback<List<Image>>() {
-            @Override
-            public void success(List<Image> images, Response response) {
-                mImages.clear();
-                mImages.addAll(images);
-                mAdapter.notifyDataSetChanged();
-            }
+        ShutterStock.getRecent(new Date(), new ImageCallback());
 
-            @Override
-            public void failure(RetrofitError error) {
+    }
 
-            }
-        });
+    private void updateImages(List<Image> images){
+        mImages.clear();
+        mImages.addAll(images);
+        mAdapter.notifyDataSetChanged();
+    }
 
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        ShutterStock.search(query, new ImageCallback());
+        return true;
     }
 
 
@@ -60,6 +68,23 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.search_view);
+        SearchView sv = (SearchView)menuItem.getActionView();
+        sv.setOnQueryTextListener(this);
+        MenuItemCompat.setOnActionExpandListener(menuItem, new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                mPreviousImages = new ArrayList<Image>(mImages);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                updateImages(mPreviousImages);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -70,11 +95,18 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class ImageCallback implements Callback<List<Image>>{
+        @Override
+        public void success(List<Image> images, Response response) {
+            updateImages(images);
         }
 
-        return super.onOptionsItemSelected(item);
+        @Override
+        public void failure(RetrofitError error) {
+
+        }
     }
 }
