@@ -1,10 +1,14 @@
 package io.bitfountain.matthewparker.shutterdroid;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -24,8 +28,10 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     }
 
     private List<Image> mImages;
+    private Context mContext;
 
-    public ImagesAdapter(List<Image> images) {
+    public ImagesAdapter(Context context, List<Image> images) {
+        mContext = context;
         mImages = images;
     }
 
@@ -39,11 +45,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         Image image = mImages.get(i);
+        Log.d("IA", image.getLargeThumbnail());
+        Picasso.with(mContext).load(image.getLargeThumbnail()).into(viewHolder.mImageView);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mImages.size();
     }
 
 

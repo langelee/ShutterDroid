@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.bitfountain.matthewparker.shutterdroid.api.Image;
@@ -19,15 +23,35 @@ import retrofit.client.Response;
 
 public class MainActivity extends ActionBarActivity {
 
+    private List<Image> mImages;
+    private ImagesAdapter mAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mImages = new ArrayList<>();
+
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mAdapter = new ImagesAdapter(this, mImages);
+        recyclerView.setAdapter(mAdapter);
 
+        ShutterStock.getRecent(new Date(), new Callback<List<Image>>() {
+            @Override
+            public void success(List<Image> images, Response response) {
+                mImages.clear();
+                mImages.addAll(images);
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
 
     }
 
